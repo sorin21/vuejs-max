@@ -1,0 +1,4 @@
+1. v-if directive
+  - we can bind to a property to show or not a piece of code
+  - with this directive the code will disappear totally if is not showed, so removes elements from DOM,
+    including the nested elements

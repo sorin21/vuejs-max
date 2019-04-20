@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="vue.js"></script>
+    <title>Document</title>
+    <style>
+      .demo {
+        width: 100px;
+        height: 100px;
+        background-color: gray;
+        display: inline-block;
+        margin: 10px;
+      }
+
+      .red {
+        background-color: red;
+      }
+
+      .green {
+        background-color: green;
+      }
+
+      .blue {
+        background-color: blue;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <div
+        class="demo"
+        @click="attcachedRed = !attcachedRed"
+        :class="divClasses"
+      ></div>
+      <div class="demo" :class="{red: attcachedRed}"></div>
+      <div class="demo" :class="[color, {red: attcachedRed}]"></div>
+      <input type="text" v-model="color" />
+    </div>
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          attcachedRed: false,
+          color: "green"
+        },
+        computed: {
+          // depends only on red property so needs to be computed
+          divClasses() {
+            // returns the same object that we set up in html :class="{red: attcachedRed, blue: !attcachedRed}"
+            return {
+              red: this.attcachedRed,
+              blue: !this.attcachedRed
+            };
+          }
+        },
+        watch: {},
+        methods: {}
+      });
+    </script>
+  </body>
+</html>

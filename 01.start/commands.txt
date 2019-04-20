@@ -1,0 +1,95 @@
+1. v-bind = Bind to attributes. 
+  Pass data inside the template. Will bind our code with the atribute that we want to bind.
+
+2. v-on = we listen to an event to run some JavaScript when the event is triggered.
+
+3. Event Modifiers: stop or prevent
+  Stop an event to propagate using a dummy() function with this line event.stopPropagation(); and call it like
+  v-on:mousemove="dummy" or using the vuejs modifier to stop Propagation: stop. So will be 
+  v-on:mousemove.stop
+
+4. Key Modifiers: enter
+  When listening for keyboard events, we often need to check for specific keys. 
+  Vue allows adding key modifiers for v-on when listening for key events.
+  Key codes:
+
+  .enter
+  .tab
+  .delete (captures both “Delete” and “Backspace” keys)
+  .esc
+  .space
+  .up
+  .down
+  .left
+  .right
+
+5. String interpolation call also as Template Expressions
+
+6. Two way binding
+  Listen an event and output data in the same time
+  v-model = automatically picks the correct way to update the element based on the input type.
+
+7. Computed: Dependent Properties
+  - ALWAYS RUN SYNCRONOUSLY
+  - what you return has to execute imediatily, you can't reach the server, etc. If you want this use watch
+  - allows to store properties, but a property doesn't have direct a data, but a function, where 
+    we return the value that this property should have.
+  - when we use this function we use it, inside html, like a property from the data, for ex output, not like a function, output()
+
+8. Watch
+  - ALWAYS RUN ASYNCRONOUSLY
+  - execute code when data changes
+
+9. Shorthands
+  v-on:click = @click
+  v-bind:href = :href
+
+10. Classes basics
+  - to attach conditionally a css class  we need to bind to class property, :class={red: attcachedRed},
+  so we put the class name and after : we put the condition
+  - if our class has a dash: :class={'red-box': attcachedRed}
+  - behind the scene vuejs will merge this into a big object
+
+11. Classes using Objects
+  - use a computed property that returns an object with the classes to be changed
+
+  computed: {
+    // depends only on red property so needs to be computed
+    divClasses() {
+      return {
+        red: this.attcachedRed,
+        blue: !this.attcachedRed
+      };
+    }
+  }
+
+12. Classes using Names
+  - using v-model we change a property, color for example, to what we want from user input and we disply the color in :class
+
+    <div class="demo" :class="color"></div>
+
+  - we cand add multiple classes using an array like this
+
+    <div class="demo" :class="[color, {red: attcachedRed}]"></div>
+
+13. Using :styles
+  - using :styles vuejs automatically adds prefixes needed
+  
+  - with quotes
+    :styles="{'background-color': color}"
+  
+  - with camel case 
+    :styles="{backgroundColor: color}"
+
+  - where color comes from user input or a call to server 
+    <input type="text" v-model="color" />
+  
+  - and is defined in data 
+    data: {
+      color: "gray"
+    },
+  
+14. Using :styles with array
+  <div class="demo" :style="[myStyle, {height: width + 'px'}]"></div>
+
+

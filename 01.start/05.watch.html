@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="vue.js"></script>
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <button v-on:click="counter++">Increase</button>
+      <button v-on:click="counter--">Decrease</button>
+      <button v-on:click="secondCounter++">secondCounter</button>
+      <p>Counter: {{ counter }} | {{ secondCounter }}</p>
+      <p>Method result: {{ result() }} | Computed result: {{ output }}</p>
+    </div>
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          counter: 0,
+          secondCounter: 0
+        },
+        computed: {
+          // for computed properties vuejs analize the code if any property inside has changed
+          output() {
+            console.log("Computed");
+            return this.counter > 5 ? "Greater 5" : "Smaller 5";
+          }
+        },
+        watch: {
+          // put here the code to execute when counter prop, from data, changes
+          // vuejs pass the value of the iupcomming change
+          counter(value) {
+            const self = this;
+            setTimeout(() => {
+              console.log(self);
+              self.counter = 0;
+            }, 2000);
+          }
+        },
+        methods: {
+          // in this way the result function gets called every time, because vuejs doesn't know if
+          // it need to re run this, it doesn't know if we use any property in this function that was changed
+          // use this way only if we know that we don't want to cache the result
+          result() {
+            console.log("Method");
+            return this.counter > 5 ? "Greater 5" : "Smaller 5";
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
