@@ -1,4 +1,13 @@
-1. v-if directive
+1. Directive
+  Is a special token, in the markup, that tells the library VueJS to to do something to a DOM element.
+
+2. v-if directive
   - we can bind to a property to show or not a piece of code
   - with this directive the code will disappear totally if is not showed, so removes elements from DOM,
     including the nested elements
+  
+3. Keeping track in v-for 
+  - we can keep track of an element that we add in an array by adding a :key="ingredient" in 
+    <li v-for="(ingredient, index) in ingredients" :key="ingredient">
+
+    because ingredient is unique

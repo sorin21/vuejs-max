@@ -11,19 +11,25 @@
 
   <body>
     <div id="app">
-      <p v-if="show">You can see me!</p>
-      <p v-else>Now you see me!</p>
-      <p>Do you see me?</p>
-      <button @click="show = !show">Switch</button>
-      <template v-if="show">
-        <p>Inside the template</p>
+      <ul>
+        <li v-for="(ingredient, index) in ingredients">
+          {{ ingredient }} ({{ index }})
+        </li>
+      </ul>
+      <template v-for="(ingredient, index) in ingredients">
+        <h1>{{ ingredient }}</h1>
+        <p>{{ index }}</p>
       </template>
     </div>
     <script>
       new Vue({
         el: "#app",
         data: {
-          show: true
+          ingredients: ["meat", "fruits", "cookies"],
+          persons: [
+            { name: "Sorin", age: 39, color: "red" },
+            { name: "Cristina", age: "unknown", color: "blue" }
+          ]
         },
         watch: {},
         methods: {}

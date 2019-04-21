@@ -11,19 +11,23 @@
 
   <body>
     <div id="app">
-      <p v-if="show">You can see me!</p>
-      <p v-else>Now you see me!</p>
-      <p>Do you see me?</p>
-      <button @click="show = !show">Switch</button>
-      <template v-if="show">
-        <p>Inside the template</p>
-      </template>
+      <ul>
+        <li v-for="person in persons">
+          <div v-for="(value, key, index) in person">
+            {{ key }}: {{ value }} ({{ index }})
+          </div>
+        </li>
+      </ul>
     </div>
     <script>
       new Vue({
         el: "#app",
         data: {
-          show: true
+          ingredients: ["meat", "fruits", "cookies"],
+          persons: [
+            { name: "Sorin", age: 39, color: "red" },
+            { name: "Cristina", age: "unknown", color: "blue" }
+          ]
         },
         watch: {},
         methods: {}
