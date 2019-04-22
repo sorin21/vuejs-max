@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1 ref="heading">{{ title }}</h1>
+      <button @click="show">Show Paragraph</button>
+      <p v-if="showParagraph">This is not always visible</p>
+    </div>
+    <div id="app1">
+      <h1 ref="heading">{{ title }}</h1>
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          title: "The VueJS Instance",
+          showParagraph: false
+        },
+        methods: {
+          show: function() {
+            this.showParagraph = true;
+            this.updateTitle("The VueJS Instance (Updated)");
+          },
+          updateTitle: function(title) {
+            this.title = title;
+          }
+        },
+        computed: {
+          lowercaseTitle: function() {
+            return this.title.toLowerCase();
+          }
+        },
+        watch: {
+          title: function(value) {
+            alert("Title changed, new value: " + value);
+          }
+        }
+      });
+
+      new Vue({
+        el: "#app1",
+        data: {
+          title: "The second instance"
+        }
+      });
+    </script>
+  </body>
+</html>
