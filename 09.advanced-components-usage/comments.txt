@@ -1,0 +1,16 @@
+Dynamic Components
+
+1. <component><component />
+
+  With <keep-alive></keep-alive> the component will not be destroyed.
+
+1.1 Component lifecycles
+  - when we are in a component and load a diff component
+  deactivated() {
+    console.log("deactivated");
+  }
+
+  - this is called when we load the component where it is 
+  activated() {
+    console.log("activated");
+  }
