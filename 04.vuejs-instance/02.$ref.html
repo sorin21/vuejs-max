@@ -9,12 +9,8 @@
   <body>
     <div id="app0">
       <h1 ref="heading">{{ title }}</h1>
-      <button @click="show">Show Paragraph</button>
+      <button @click="show" ref="myButton">Show Paragraph</button>
       <p v-if="showParagraph">This is not always visible</p>
-    </div>
-    <div id="app1">
-      <h1 ref="heading">{{ title }}</h1>
-      <button @click="onChange">Change something in vue 0</button>
     </div>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script>
@@ -30,6 +26,8 @@
           show: function() {
             this.showParagraph = true;
             this.updateTitle("The VueJS Instance (Updated)");
+            console.log("this.$refs", this.$refs.myButton);
+            this.$refs.myButton.innerText = "Test for button";
           },
           updateTitle: function(title) {
             this.title = title;
@@ -46,19 +44,8 @@
           }
         }
       });
-      console.log(vm0.$data === data);
 
-      const vm1 = new Vue({
-        el: "#app1",
-        data: {
-          title: "The second instance"
-        },
-        methods: {
-          onChange: function() {
-            vm0.title = "Changed";
-          }
-        }
-      });
+      vm0.$refs.heading.innerText = "A new heading title";
     </script>
   </body>
 </html>

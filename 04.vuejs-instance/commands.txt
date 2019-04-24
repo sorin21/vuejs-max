@@ -1,0 +1,74 @@
+1. $ref
+  It is a key added by vuejs, that can be added to any html element like this:
+    <button @click="show" ref="myButton>Show Paragraph</button>
+  
+  So it is not a directive.
+
+  Access the html like this:
+   this.$refs.myButton.innerText = "Test for button";
+
+  If we acces it from outside vue instance like this:
+  vm0.$refs.heading.innerText = "A new heading title";
+
+  then vuejs re-renders the DOM takes the old template, based on vuejs instance, and 
+  re-renders the DOM based on this template, so overwrites the change we made above in heading. This is 
+  happending because we change directly in the DOM, is not part on vuejs instance.
+
+2. Mounting a template
+  VueJS takes the html from our project and creates a template, that will store internally, behind the scene will 
+  be converted in javascript, and is able to update this template when we change something. Then will write it to the 
+  native DOM that we see it.
+
+  We can remove the element from vue instance:
+  el: "#app"
+
+  and instead go below the creation of instance and call it like:
+  vm.$mount('#app0')
+
+  All the properties prefixed with $ are the native vuejs properties and methods.
+
+3. Virtual DOM
+  This is a reprezentation of the real DOM, a copy parsed in javascript very quick to access. VueJS writes these changes 
+  in the Virtual DOM, if we update a data prop for example, and recreates this Virtual DOM. 
+
+  VueJS will take the differents from the VueJS template and Virtual DOM and updates only what ws changed, in the real DOM.
+
+
+4. VueJS Lifecycle
+  1. new Vue()
+
+  2. beforeCreate()
+    - before the instance is created 
+
+  Then initilize the Data and Events passed to the Vue object and creates the instance calling created().
+
+  3. created()
+
+  Then compiles the template then beforeMount() is reached.
+
+  4. beforeMount()
+    - is called right before the template, that is rendered, is mounted to the real DOM.
+
+  Then will replace the el element with the compiled template, so comvers template to html, but still behind the scenes.
+
+  5. mounted()
+    - now the instance is hooked to DOM and can be seen.
+
+  If some data changes the DOM is re-render.
+
+  6. beforeUpdate()
+    - right before we re-render the DOM.
+
+  7. updated()
+    - called after the data was updated.
+
+  8. beforeDestroy()
+    - right before an instance is destroyed.
+
+  9. destroyed()
+    - right after the instance was destroyed.
+
+  Call to destroy:
+  this.$destroy();
+
+  This will remove only all javascript logic.

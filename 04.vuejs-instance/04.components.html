@@ -9,13 +9,14 @@
   <body>
     <div id="app0">
       <h1 ref="heading">{{ title }}</h1>
-      <button @click="show">Show Paragraph</button>
+      <button @click="show" ref="myButton">Show Paragraph</button>
       <p v-if="showParagraph">This is not always visible</p>
+      <hello></hello>
+      <hello></hello>
     </div>
-    <div id="app1">
-      <h1 ref="heading">{{ title }}</h1>
-      <button @click="onChange">Change something in vue 0</button>
-    </div>
+
+    <div id="app3"></div>
+
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script>
       const data = {
@@ -24,12 +25,13 @@
       };
 
       const vm0 = new Vue({
-        el: "#app0",
         data: data,
         methods: {
           show: function() {
             this.showParagraph = true;
             this.updateTitle("The VueJS Instance (Updated)");
+            console.log("this.$refs", this.$refs.myButton);
+            this.$refs.myButton.innerText = "Test for button";
           },
           updateTitle: function(title) {
             this.title = title;
@@ -46,19 +48,22 @@
           }
         }
       });
-      console.log(vm0.$data === data);
 
-      const vm1 = new Vue({
-        el: "#app1",
-        data: {
-          title: "The second instance"
-        },
-        methods: {
-          onChange: function() {
-            vm0.title = "Changed";
-          }
-        }
+      Vue.component("hello", {
+        template: "<h1> hello from inside component"
       });
+
+      vm0.$mount("#app0");
+      vm0.$refs.heading.innerText = "A new heading title";
+
+      const vm3 = new Vue({
+        template: "<h1>Hello there </h1>"
+      });
+
+      vm3.$mount("#app3");
+
+      // adding the template to vm3 instance
+      document.getElementById("app3").appendChild(vm3.$el);
     </script>
   </body>
 </html>

@@ -1,0 +1,119 @@
+1. Passing prop dynamic from parent to child
+  In the parent we put a name in data and in child we put the attribute
+    :myName="name"
+  then in child we use 
+    props: ["myName"]
+  so we can set {{myName}}
+
+2. Validate props
+  To validate props we need props to be an object not an array  and to put 
+  what type we aspect:
+    props: {
+      myName: {
+        type: String
+      }
+    }
+
+  - we can aspect multiple types:
+    props: {
+      myName: {
+        type: [String, Array]
+      }
+    }
+  
+  - if it is required:
+    props: {
+      myName: {
+        type: String, 
+        required: true
+      }
+    }
+
+  - with default value:
+    props: {
+       myName: {
+        type: String,
+        default: "Ana"
+      }
+    }
+
+    - type Object or Array:
+    props: {
+       myName: {
+        type: Object,
+        default: function() {
+          // return an object 
+          return {
+            name: "Sorin"
+          }
+        }
+      }
+
+3. Send props from child to parent
+  To send props from child to parent we have to emit a custom event, so we have access to $emit. 
+  In emit we put the  name that we want to emit, nameWasReset.
+  So in child we emit an event: 
+    $emit('nameWasReset', this.myName)
+
+  In parent we listen the event:
+    <app-user-detail :myName="name" @nameWasReset="name = $event"></app-user-detail>
+
+  - $event is the data the we passed through the event, myName
+
+4. Send a callback as a prop from parent to child 
+  This callback is executable in parent, but passing as prop can be executed in child, too.
+  So in parent we have in methods:
+    resetName() {
+      this.name = "Mike";
+    }
+  
+  And in html:
+    <app-user-detail :myName="name" @nameWasReset="name = $event" :resetFn="resetName"></app-user-detail>
+
+  So in child we receive resetFn as a prop:
+    resetFn: Function
+  
+  And we use it:
+    <button @click="resetFn()">Reset Name</button>
+
+5.1 Send data from a child to another child with $emit
+  In child UserEdit we emit a custom event:
+    this.$emit("ageWasEdited", this.userAge);
+
+  Then in parent User we listen the event like an attribute to UserEdit child:
+    <app-user-edit :userAge="age" @ageWasEdited="age = $event"></app-user-edit>
+
+  In User we send as prop to UserDetail and User Edit too:
+    :userAge="age"
+  And inside UserDetail and UserEdit we output this prop:
+    {{userAge}}
+
+5.2 Send data from a child to another child using a function
+  Create in parent User a method:
+    changeAgain() {
+      this.age = 17;
+    }
+  
+  Add it like attribute to UserEdit:
+    <app-user-edit :userAge="age" @ageWasEdited="age = $event" :changeAgain="changeAgain"></app-user-edit>
+
+  Then in UserEdit receive it like prop:
+    changeAgain: Function
+
+  And executed:
+    <button @click="changeAgain()">Reset Again</button>
+
+5.3 Comunicate with Event Bus
+  The event bus is a vue instance and has the $emit method and more others.
+
+  We emit an event from a child:
+    eventBus.$emit("ageWasEdited", this.userAge);
+
+  And we listen that event in other child:
+    created() {
+      eventBus.$on("ageWasEdited", age => {
+        this.userAge = age;
+      });
+    }
+
+
