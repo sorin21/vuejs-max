@@ -1,0 +1,14 @@
+1. Prevent Modifier
+  If we don't want to submit and reload the form we use .prevent like:
+    <button class="btn btn-primary" @click.prevent="createNew">Add Quote</button>
+
+2. Navive Modifier
+  Vue enables you to listen to all these native DOM events on the normal HTML elements (e.g. @click  on a <div> , <button>  etc).
+  <app-quote
+      v-for="(quote, index) in quotes"
+      :key="quote"
+      @click.native="deleteQuote(index)"
+    >{{quote}}</app-quote>
+  You can also listen to your own events on your own components.
+  That leaves one case: Normal DOM events (e.g. click) on components. @click  on your own component. By  default, 
+    this would react to your own event named click. If you want to use the  "built-in" one, you need to use @click.native .
