@@ -1,0 +1,91 @@
+1. Inputs Two way data binding using v-model
+  v-model behind the scene on this exemple
+    v-model="userData.email"
+
+  will bind :value to userData.email and also gives us @input and @change listeners, and listen to changes
+  where userData.email = $event.target.value
+    :value="userData.email"
+    @input="userData.email = $event.target.value"
+
+2. Grouping data using an object:
+    userData: {
+          email: "",
+          password: "",
+          age: 0,
+          message: ""
+        },
+  and prepopulating inputs:
+    v-model="userData.email"
+
+3. Lazy Input Modifier
+  <input type="password" id="password" class="form-control" v-model.lazy="userData.password">
+  Now with lazy will not listen to input event, but to the change event, when we click somewhere else.
+
+4. Trim Input Modifier
+  <input type="password" id="password" class="form-control" v-model.trim="userData.password">
+  This will trim all the excess space from beginning and end.
+
+5. Number Input Modifier
+  <input type="password" id="password" class="form-control" v-model.number="userData.password">
+  Converts to a number right away, because by default in input all are string.
+
+6. Textarea
+  Using v-model we can use it like default value
+    <textarea id="message" rows="5" class="form-control" v-model="message"></textarea>
+  Keep line breaks inside textarea using style css property white-space
+    <p style="white-space: pre">Message: {{ message }}</p>
+
+7. Checkbox
+  We add all ckeckboxes into an array
+    <input type="checkbox" id="sendmail" value="SendMail" v-model="sendMail"> Send Mail
+    <input type="checkbox" id="sendInfomail" value="S
+    sendInfoMail" v-model="sendMail"> Send Infomail
+  VueJS automatically will add the values of these checkboxes into this sendMail array.
+
+8. Radio
+  Bind to the same mode, that belogs to the same group: gender, using v-model.
+    <input type="radio" id="male" value="Male" v-model="gender"> Male
+    <input type="radio" id="female" value="Female" v-model="gender"> Female
+
+  VueJS automatically will store the values from radio buttons in gender property from data()
+
+9. Select
+  Set the default value using property binding :selected. Selected will work only if we don't use v-model.
+    <option
+      v-for="priority in priorities"
+      :key="priority"
+      :selected="priority == 'Low'"
+    >{{ priority }}</option>
+
+  Bind the select field using v-model
+    <select id="priority" class="form-control" v-model="selectedPriority">
+
+10. Create a custom input
+  We create a separate component, Switch.vue, import it in App.vue and add v-model to it. v-model will pass 
+  true or false. In this case we have to the value prop, inside Switch component, and emit and @input event.
+
+  So in Switch we add(:value)
+    props: ['value']
+  and use value
+    <div id="on" @click="value = true" :class="{active: value}">On</div>
+    <div id="off" @click="value = false" :class="{active: !value}">Off</div>
+
+  Now we have to emit and event. So we create the method onSwitch, where the event has to be named input,
+  because that is what v-model is wainting for(@input)
+    onSwitch(isOn) {
+      this.$emit('input', isOn)
+    }
+
+11. Submit
+  Button always will reload the page so we will use .prevent against that. With .prevent we don't sent data to server,
+  but we let VueJS to handle this.
+    <button class="btn btn-primary" @click.prevent="onSubmit">Submit!</button>
+
+
+  
+
+
+
+
+
+
