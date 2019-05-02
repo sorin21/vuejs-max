@@ -1,0 +1,164 @@
+1. Buil-in directives
+  v- will tell to VueJS that this is not a normal attribute, but this is a directive that should handle.
+
+1.a. v-text
+  <p v-text="'Some text from v-text'"></p>
+
+1.b. v-html
+  <p v-html="'<strong>Text with v-html</strong>'"></p>
+  Using this directive we should sanitize the output to not get cross site scritpting attacks, because we 
+  output html here and can be malicious script tags.
+
+
+2. Custom directives
+  We have to declarit globally in main.js. First argument is the directive name. Second argument is an object to configure it.
+
+   Vue.directive("highlight", {
+      bind() {
+        el.style.backgroundColor = "lightgreen";
+      }
+    });
+
+    We use it like this:
+      <p v-highlight>Color this</p>
+
+  A directive has 5 methods that we can use to configure it:
+    a. bind(el, binding, vnode) = is fired when our directive si bind to an element.
+        el      = element that the directive sits on
+        binding = the way that this directive is set up(should be treated as READ ONLY)
+        vnode   = refers to current node in virtual DOM(should be treated as READ ONLY)
+
+    b. inserted(el, binding, vnode) = occurs as soon as the element is inserted into the DOM
+
+    c. update(el, binding, vnode, oldVnode) = is called when the component updates, but wihtout children been updated yet.
+        oldVnode = since is updated we have oldVnode and new node in virtual DOM(both should be treated as READ ONLY)
+
+    d. componentUpdated(el, binding, vnode, oldVnode) = is called when the component is updated with the children too.
+
+    e. unbind(el, binding, vnode) = used when the directive would be removed
+
+  
+  3. Passing values to Custom Directive
+    Let the user to chage the background color using binding.value:
+    Vue.directive("highlight", {
+      bind(el, binding, vnode) {
+        el.style.backgroundColor = binding.value;
+      }
+    });
+
+    And use it like this:
+      <p v-highlight="'blue'">Color this</p>
+
+    This blue is the value passed to custom directive.
+
+  4. Passing arguments to Custom Directive
+      <p v-highlight:background="'blue'">Color this</p>
+    
+    - this :background is treated as an argument in our directive.
+    - access the argumentst: binding.arg
+    
+      Vue.directive("highlight", {
+        bind(el, binding, vnode) {
+          if (binding.arg == "background") {
+            el.style.backgroundColor = binding.value;
+          } else {
+            el.style.color = binding.value;
+          }
+        }
+      });
+
+    - we can see the result from else {} having no argument:
+      <p v-highlight="'blue'">Color this</p>
+
+  5. Modifiers
+    Create delayed modifier:
+      <p v-highlight:background.delayed="'blue'">Color this</p>
+
+    Inside directive we check if our modifier exist:
+      Vue.directive("highlight", {
+        bind(el, binding, vnode) {
+          let delay = 0;
+          // Check if binding has modifiers
+          if (binding.modifiers["delayed"]) {
+            delay = 3000;
+          }
+
+          // add style after 3 seconds
+          setTimeout(() => {
+            if (binding.arg == "background") {
+              // Check if the argument is background
+              el.style.backgroundColor = binding.value;
+            } else {
+              el.style.color = binding.value;
+            }
+          }, delay);
+        }
+      });
+    
+    You can chain more modifiers:
+      <p v-highlight:background.delayed.another="'blue'">Color this</p>
+
+6. Local Directive
+  We can add local directive in a component using directives:
+    export default {
+      directives: {
+        "local-highlight": {
+          bind(el, binding, vnode) {
+            let delay = 0;
+            // Check if binding has modifiers
+            if (binding.modifiers["delayed"]) {
+              delay = 3000;
+            }
+
+            // add style after 3 seconds
+            setTimeout(() => {
+              if (binding.arg == "background") {
+                // Check if the argument is background
+                el.style.backgroundColor = binding.value;
+              } else {
+                el.style.color = binding.value;
+              }
+            }, delay);
+          }
+        }
+      }
+    };
+
+  
+7. Passing complex values to directive
+    <p v-local-highlight:background.delayed.blink="{mainColor: 'lightgreen', secondColor: '#00FFFF', delay: 500}">Color this too</p>
+
+8. Custom directive live v-on
+    <button v-custom-on="clicked">Click me</button>
+
+  - And in directives:
+    "custom-on": {
+      bind(el, binding, vnode) {
+        // we have to listen here to click event
+        el.onclick = () => {
+          // exectute  binding.value
+          binding.value();
+        };
+      }
+    }
+
+
+  - And the method clicked:
+    clicked() {
+      alert("You clicked!");
+    }
+
+
+  - Listen to any event:
+    "custom-on": {
+      bind(el, binding, vnode) {
+        const type = binding.arg;
+        // pass this fn reference to event listener
+        const fn = binding.value;
+        el.addEventListener(type, fn);
+      }
+    }
+
+ - And in html put click to listen to click event:
+  <button v-custom-on:click="clicked">Click me</button>
+
