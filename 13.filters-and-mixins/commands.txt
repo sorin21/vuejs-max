@@ -1,0 +1,63 @@
+1. Filters
+  A filter is little syntax feature that you can use in template to transform (ONLY) some output.
+
+2. Create filter globally
+  In main.js:
+    Vue.filter("toLowerCase", value => {
+      return value.toLowerCase();
+    });
+
+3. Create filter locally
+  The filter function always gets a value as an input, and the value is data that we want to transform.
+  Inside template:
+    <p>{{ text | toUpperCase}}</p>
+
+  Inside javascript:
+    filters: {
+      "to-uppercase"(value) {
+        return value.toUpperCase();
+      }
+    }
+
+4.Mixins
+  Import it first:
+    import { fruitMixin } from "./fruitMixin.js";
+
+  Use a mixin:
+    mixins: [fruitMixin],
+
+  The mixin file:
+    export const fruitMixin = {
+      data() {
+        return {
+          fruits: ["Apple", "Banana", "Orange", "Kiwi"],
+          filterText: ""
+        };
+      },
+      computed: {
+        filterdFruits() {
+          // this computed prop will be recalculated only if
+          // fruits or filterText changes
+          return this.fruits.filter(element => {
+            // return element.match(this.filterText);
+            return element.includes(this.filterText);
+          });
+        }
+      }
+    };
+
+  First the mixins are created then the components.
+  The mixin is not shared, doesn't have the same place in memory, but instead is replicated. So each component 
+    that gets a mixin, gets a fresh copy and not shared one. VueJS will create a copy for you to not influence 
+    other components.
+
+
+5. Global Mixins
+  This mixin is added to every instance.
+
+    Vue.mixin({
+      created() {
+        console.log("Global mixin");
+      }
+    });
+    
