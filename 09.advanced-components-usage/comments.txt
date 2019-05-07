@@ -1,10 +1,67 @@
-Dynamic Components
+1. Slots
+  We use a slot in child component.
+  In App.vue we will have the child that wraps some HTML:
+    <appQuote>
+      <h1>VueJS Quotes</h1>
+      <h2>The Quote</h2>
+      <p>{{ quote }}</p>
+    </appQuote>
 
-1. <component><component />
+  And in child we will have slot to output that content:
+    <slot></slot>
+
+  The style that the child has is applied to the data being passed from outside, from parent.
+  The style from parent doesn't get applied to the data passed to child.
+  All the changes are done in the parent component.
+
+  We can name a slot to receive a specific content:
+    <appQuote>
+      <h1 slot="title">VueJS Quotes</h1>
+      <h2>The Quote</h2>
+      <p>{{ quote }}</p>
+    </appQuote>
+
+  And in child we put:
+    <slot name="title"></slot>
+  
+  The rest of HTML that we send in child will be received by the slod that doesn't have a name.
+  That is called default slot.
+
+
+2. Dynamic Components
+  Component allows us to dynamically add components.
+  We can bind the component to a property that holds the component witch should loaded, :is attribute:
+    <component :is="selectedComponent">Default Content</component>
+  
+  And in data() we have:
+    selectedComponent: "appQuote"
+  
+  AppQuote is one of the 3 components that is the default one.
+  To load the content for each one, in template we will have:
+    <button @click="selectedComponent = 'appQuote'">Qoute</button>
+    <button @click="selectedComponent = 'appAuthor'">Author</button>
+    <button @click="selectedComponent = 'appNew'">New</button>
+
+
+  Each type we visit a content from a <component> the content is new not the old one.
+  The component is destroyed and recreated. We see this with life cycle methods.
+  Swiching from one component to another destroyed is called.
+    destroyed() {
+      console.log("destroyed");
+    },
+
+  To not be destroyed we use keep alive:
+     <keep-alive>
+      <component :is="selectedComponent">Default Content</component>
+    </keep-alive>
+
 
   With <keep-alive></keep-alive> the component will not be destroyed.
 
 1.1 Component lifecycles
+  We can check if a dinamyc component is currently visted, so it was activated, or if was left, deactivated.
+  So in child components we can add these lifecycles methods:
+  
   - when we are in a component and load a diff component
   deactivated() {
     console.log("deactivated");

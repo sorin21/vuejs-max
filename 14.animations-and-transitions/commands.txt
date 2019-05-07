@@ -1,0 +1,180 @@
+1. Animation
+  Use transion to animate:
+    <transition name="fade">
+      <div class="alert alert-info" v-if="show">This is some info</div>
+    </transition>
+
+  Steps:
+  a. *-enter = active for only 1 frame. Here set the initial state, for example transparent. This class will be removed after 1 frame.
+      .fade-enter {
+        opacity: 0;
+      }
+  b. *-enter-active = active for whole animation time, at each element 
+      .fade-enter-active {
+        transition: opacity 1s ease-out;
+      }
+  c. *-leave
+      .fade-leave {
+        /* opacity: 1; */
+      }
+  c. *-leave-active
+      .fade-leave-active {
+        transition: opacity 1s;
+        opacity: 0;
+      }
+
+2. Animation or Transition
+  If we want to chose between those, who to run, we use type argument:
+    <transition name="slide" type="animation">
+      <div class="alert alert-info" v-if="show">This is some info</div>
+    </transition>
+
+3. Animate on-load page
+  Use appear attribute:
+    <transition name="fade" appear="true">
+      <div class="alert alert-info" v-if="show">This is some info</div>
+    </transition>
+
+4. Animate CSS library
+  https://github.com/daneden/animate.css
+  
+  Add the CDN link into head in index.html
+
+5. Overwrite the default classes that VueJS attaches
+  To not use fade for classes, from name="fade", we remove name="fade" and we specify witch class to use 
+    at witch point of time.
+  We have to use class animated, to use Animation css library, and bounce to bounce it.
+    <transition appear="true" enter-active-class="animated bounce">
+      <div class="alert alert-info" v-if="show">This is some info</div>
+    </transition>
+
+6. Using Dynamic Names and Attributes
+    In data() we declare:
+      alertAnimation: "fade"
+    
+    In template we will have:
+      <select v-model="alertAnimation">
+        <option value="fade">Fade</option>
+        <option value="slide">Slide</option>
+      </select>
+    
+    And now we can bind name dynamically:
+      <transition :name="alertAnimation">
+        <div class="alert alert-info" v-if="show">This is some info</div>
+      </transition>
+      <transition :name="slide" type="animation" appear>
+        <div class="alert alert-info" v-if="show">This is some info</div>
+      </transition>
+
+7. Transitioning between Multiple Elements
+    Overwrite the default mode that VueJS is using. We have 2 modes to choose from:
+      a. out-in = let the old element animate first and then animate in new one
+      b. in-out =  the oposite
+
+    So we choose the out-in mode to have a nice transion. Beside this we need to add a key to make each element unique.
+      <transition :name="alertAnimation" mode="out-in">
+        <div class="alert alert-success" v-if="show" key="info">This is some success</div>
+        <div class="alert alert-warning" v-else key="warning">This is some warning</div>
+      </transition>
+
+8. Transition Event Hooks
+  a. before-enter = kind of similar with -enter class being attached for one frame 
+      beforeEnter(el) {
+        console.log(to);
+      },
+  b. enter = here we play the animation
+      enter(el, done) {
+        console.log("enter");
+        // done tell to VueJS when the animation finishes
+        // we don't need done if we use CSS animation
+        done();
+      },
+  c. after-enter = executed when the animation finished
+      afterEnter(el) {
+        console.log("afterEnter");
+      },
+  d. enter-canceled = change the element before the animation finished
+      enterCancelled(el) {
+        console.log("enterCanceled");
+      },
+  e. before-leave
+      beforeLeave(el) {
+        console.log("beforeLeave");
+      },
+  f. leave
+      leave(el, done) {
+        console.log("leave");
+        done();
+      },
+  g. after-leave
+      afterLeave(el) {
+        console.log("afterLeave");
+      },
+  h. leave-canceled
+      leaveCancelled(el) {
+        console.log("leaveCancelled");
+      }
+
+  We can mixt these hooks with CSS.
+
+9. Exclude CSS from animation
+  We can tell VueJS to skip CSS detection, to not check for CSS, from the beginning using :css attribute:
+    <transition
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @after-enter="afterEnter"
+      @enter-cancelled="enterCancelled"
+      @before-leave="beforeLeave"
+      @leave="leave"
+      @after-leave="afterLeave"
+      @leave-cancelled="leaveCancelled"
+      :css="false"
+    >
+
+  We use :css, attribute binding, because we need a Boolean and not a string.
+
+10. Animate Dynamic Components
+  Create 2 new components and import them in App.vue then add them to components:
+    components: {
+      dangerAlert: DangerAlert,
+      successAlert: SuccessAlert
+    }
+
+  In data() we use the default component:
+    selectedComponent: "app-success-alert"
+
+  In template we add component:
+    <component :is="selectedComponent"></component>
+
+  Add animation using transion:
+    <transition name="fade">
+      <component :is="selectedComponent"></component>
+    </transition>
+
+  To avoid the ugly jump in animation use mode:
+    <transition name="slide" mode="out-in">
+
+11. Transition Group to Animate a List
+  Transition is not rendered to the DOM. 
+  Transition Group does render a new HTML tag. By default that will be a span, but we can overwrited using tag="TAG".
+    <ul class="list-group">
+      <transition-group name="slide" mode="out-in" tag="TAG">
+        <li
+          class="list-group-item"
+          v-for="(number, index) in numbers"
+          :key="number"
+          @click="removeItem(index)"
+          style="cursor: pointer"
+        >{{ number }}</li>
+      </transition-group>
+    </ul>
+
+  For animation list we have one more class available, but not for simle transition, only for lists:
+    .slide-move {
+      transition: transform 1s;
+    }
+
+  This class is attached to any element witch needs to change its place, for example, because a new element was added.
+
+  For removing an element, the elements will ugly jump. So we use position: absolute to the last animated element so the 
+    other elements move above this element.
