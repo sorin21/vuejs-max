@@ -1,0 +1,42 @@
+1. Vue Resource
+  npm install vue-resource
+
+  Then in main.js:
+    // tells to VueJS to use a plugin
+    Vue.use(VueResource);
+
+  Now we cam access what vue-resource offers.
+
+  Create in Firebase project vuejs-resource. Change in database rules from false to true all, to not have to authenticate, 
+    only for testing.
+
+  POST Request - Send data to firebase:
+    submit() {
+      this.$http.post(
+        "https://vuejs-resource-2ea47.firebaseio.com/data.json",
+        this.user
+      );
+    }
+
+  In firebase we have to create instead of null, the data object and add to this link .json to work.
+
+
+2. Vue Resource Globally
+  In main.js:
+  Vue.http.options.root = "https://vuejs-resource-2ea47.firebaseio.com/data.json";
+
+  And then in any commponent:
+    .get('');
+
+
+3. Intercepting Requests
+  interceptors = array of functions that we want to execute on eact request
+
+    // push a new interceptors in this array
+    Vue.http.interceptors.push((request, next) => {
+      console.log(request);
+      if (request.method == "POST") {
+        request.method = "PUT";
+      }
+      next();
+    });
