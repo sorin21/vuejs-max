@@ -1,0 +1,298 @@
+1. npm i --save vue-router
+  Use it after inmport it:
+    Vue.use(Router);
+
+  Create the routes:
+    export default new Router({
+      routes: [
+        {
+          path: "/",
+          name: "User",
+          component: User
+        },
+        {
+          path: "/details",
+          name: "UserDetail",
+          component: UserDetail
+        },
+        {
+          path: "/details",
+          name: "UserEdit",
+          component: UserEdit
+        },
+        {
+          path: "/details",
+          name: "UserStart",
+          component: UserStart
+        }
+      ]
+    });
+
+  Output component :
+    <router-view/>
+
+  This component is a functional component that renders the matched component for the given path.
+
+
+  Change the default mode
+  Default mode in browser link is with #, called hash. To change it we add mode:history. This is the name for no #.
+    export default new Router({
+      mode: "history"
+
+  Add links
+    <li class="active">
+      <router-link to="/">Home</router-link>
+    </li>
+
+
+  Create a list instead on anchor tag using tag attribute
+    <router-link tag="li" to="/"><a>Home</a></router-link>
+    <router-link tag="li" to="/user"><a>user</a></router-link>
+    <router-link tag="li" to="/edit"><a>edit</a></router-link>
+    <router-link tag="li" to="/details"><a>details</a></router-link>
+
+  
+  Active link:
+    <router-link tag="li" active-class="active" to="/"><a>Home</a></router-link>
+    <router-link tag="li" active-class="active" to="/user"><a>user</a></router-link>
+    <router-link tag="li" active-class="active" to="/edit"><a>edit</a></router-link>
+    <router-link tag="li" active-class="active" to="/details"><a>details</a></router-link>
+
+  Add exact to root link to not point to root / all the time, so we overwrite this behavior:
+    <router-link tag="li" active-class="active" to="/" exact><a>Home</a></router-link>
+    <router-link tag="li" active-class="active" to="/user"><a>user</a></router-link>
+    <router-link tag="li" active-class="active" to="/edit"><a>edit</a></router-link>
+    <router-link tag="li" active-class="active" to="/details"><a>details</a></router-link>
+
+
+  Navigate in our code with $router
+    In HTML:
+      <button class="btn btn-primary" @click="navigateToHome">Go to Home</button>
+    In methods:
+      navigateToHome() {
+        // push a new route in the stack of existing routes
+        this.$router.push({
+          path: "/"
+        });
+      }
+
+  Access the route parameters from url:
+    data() {
+      return {
+        // $route is the active route
+        id: this.$route.params.id
+      };
+    },
+
+  Watch the route parameters if they change. If they change update the code: 
+    watch: {
+      // vue router gives to, from args: to what route, from what route
+      $route(to, from) {
+        // to the new route that get loaded
+        this.id = to.params.id;
+      }
+    }
+
+2. Nested Routes(Children)
+    If you put in children path: '/details' this will go to the root, but if the children are for /user 
+      we put just path: 'details'.
+
+
+3. Pass a parameter dynamically
+  We bind :to or v-bind:to, to not use just a simple string:
+    <router-link tag="button" :to="'/user/' + $route.params.id + '/edit'">Edit user {{ $route.params.id }}</router-link>
+
+  A better way:
+    In routes we have to have a name to each route:
+      {
+        path: ":id/edit",
+        name: "UserEdit",
+        component: UserEdit
+      }
+
+    Then in UserEdit.vue we replace the one above with:
+      <router-link
+        tag="button"
+        :to="{ name: 'UserEdit', params: {id: $route.params.id}}"
+      >
+      Edit user {{ $route.params.id }}
+      </router-link>
+
+4. Query parameters
+    Use it in an object:
+      <router-link
+        tag="button"
+        :to="{ name: 'UserEdit', params: {id: $route.params.id}, query: {locale: 'en', q: 100}}"
+      >Edit user {{ $route.params.id }}</router-link>
+
+    Extractit like this:
+      <p>Locale: {{ $route.query.locale }}</p>
+
+
+5. Multiple routes views
+    Add it in App.vue instead of simple <app-header> we can have:
+      <router-view name="header-top"/>
+      <router-view/>
+      <router-view name="header-bottom"/>
+
+    Use it: 
+      {
+        path: "/",
+        name: "Dashboard",
+        components: {
+          default: Dashboard,
+          "header-top": Header
+        }
+      },
+      {
+        path: "/user",
+        name: "User",
+        components: {
+          default: User,
+          "header-bottom": Header
+        },
+        props: true,
+      }
+
+
+6. Rediderct
+    Simple:
+      {
+        path: "/redirectme",
+        redirect: "/user"
+      }
+    Or with an object:
+      {
+        path: "/redirectme",
+        redirect: { name: UserEdit }
+      }
+
+
+7. Not Found route  
+    Redirect to home to what is not found:
+      {
+        path: "*",
+        redirect: "/"
+      }
+
+8. Passing the hash fragment
+    We add in UserDetail.vue the hash:
+      data() {
+        return {
+          link: {
+            name: "UserEdit",
+            params: { id: this.$route.params.id },
+            query: { locale: "en", q: 100 },
+            hash: "#data"
+          }
+        };
+      }
+
+    To have the scroll to tha data part we add in routes scrollBehavior method:
+      scrollBehavior(to, from, savedPosition) {
+        // use a selector
+        // check if the route we want to navigate has a hash property set
+        // and go to it
+        if (to.hash) {
+          // the hash is the data from UserDetail.vue:  hash: "#data"
+          return { selector: to.hash };
+        }
+        // else go down 700px
+        return { x: 0, y: 700 };
+      },
+
+
+    savedPosition is if we hit back button and we scroll a little the browser will save the position. 
+
+
+9. Protecting routes with Guards
+
+    Allow to enter check:
+
+      a. - globally inside main.js
+        // means: execute this before each routing action
+        // next will let to continue the process; without is will exit, will not go to route you want to go
+        // beforeEach gets executed all the time
+        router.beforeEach((to, from, next) => {
+          console.log("global beforeEach");
+          // abord
+          // next(false);
+          // pass a path to navigate to
+          // next('/');
+          // pass an object
+          // next({ path: "/" });
+          next();
+        });
+      
+      b. - inside router
+        {
+          path: ":id",
+          name: "UserDetail",
+          component: UserDetail,
+          beforeEnter: (to, from, next) => {
+            console.log("inside route UserDetail");
+            next();
+          }
+        },
+
+      c. - locally inside UserDetail.vue in javascript area:
+        beforeRouteEnter(to, from, next) {
+          console.log("inside component UserDetail");
+          // check is user is authenticated her
+          // if(user) {}
+
+          // if we want to access link
+          // next(vm => {
+          //   console.log(vm.link);
+          // });
+
+          next();
+        }
+
+
+    Allow to leave check
+      Inside UserEdit we create a prop confirmed: false and in a button we put
+
+        <button class="btn btn-primary" @click="confirmed = true">Confirm</button>
+
+      Then in javascript:
+
+        beforeRouteLeave(to, from, next) {
+          // we have access to this.confirmed because the component is already created
+          if (this.confirmed) {
+            console.log("inside UserEdit beforeRouteLeave");
+            next();
+          } else {
+            if (confirm("Are you sure?")) {
+              // if yeas
+              next();
+            } else {
+              // if no
+              next(false);
+            }
+          }
+
+
+10. Lazy loading
+   Lazy loading means that we only need or we only load parts of the application when we need it.
+   This syntax webpack will recogniz, that si why we create diff bundles and not include all in main bundle.
+  
+    const User = resolve => {
+      // webpack will recognize and execute
+      require.ensure(["../components/User.vue"], () => {
+        // this is like a promise, resolve before executed, so
+        // webpack will load this only we need this file
+        resolve(require("../components/User.vue"));
+      });
+    };
+
+  Add all User routes in one group adding 3rd argument:
+        resolve(require("../components/User.vue"));
+      }, 'user');
+
+
+    
+
+
+  
+

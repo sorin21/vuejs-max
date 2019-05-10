@@ -31,6 +31,14 @@
 
 7. Computed: Dependent Properties
   - ALWAYS RUN SYNCRONOUSLY
+
+    Computed properties have a a very specific purpose: composing new data derived from other data. 
+    
+    They are used whenever you have some data and need to transform it, filter it, or otherwise manipulate it 
+      before using it in the template.
+
+    Computed properties always have to return a value.
+
   - what you return has to execute imediatily, you can't reach the server, etc. If you want this use watch
   - allows to store properties, but a property doesn't have direct a data, but a function, where 
     we return the value that this property should have.
@@ -39,6 +47,11 @@
 8. Watch
   - ALWAYS RUN ASYNCRONOUSLY
   - execute code when data changes
+
+  With watch, you can execute ANY code whenever the watched value changes. You can call an API (async code), console.log() 
+    something (sync code), show an alert etc. Whatever you need to do.
+
+  Watched properties only act on one property.
 
 9. Shorthands
   v-on:click = @click
