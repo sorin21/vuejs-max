@@ -1,0 +1,245 @@
+1. Central Store
+  Where we store our application state.
+
+    npm install vuex
+
+2. Create a new store
+  In main.js store the state:
+    export const store = Vuex.Store({
+      state: {
+        counter: 0
+      }
+    });
+
+  Then registered as a property in the vue instance, still in main.js:
+    new Vue({
+      el: "#app",
+      router,
+      store,
+      components: { App },
+      template: "<App/>"
+    });
+  
+  Then in Counter access the state:
+    methods: {
+      increment() {
+        // this.$emit('updated', 1);
+        this.$store.state.counter++;
+      },
+      decrement() {
+        this.$store.state.counter--;
+      }
+    }
+
+  And in Result.vue ouput the modified state:
+    computed: {
+      counter() {
+        return this.$store.state.counter;
+      }
+    }
+  
+  watch will only executes when the component property changes, but here we are looking for a change 
+  in Store property ( this.$store.state.counter ), so computed property is the right approach.
+
+
+3. Getters
+  Get the state from the store and perform any calculation , then we access this getter from our components.
+
+  Like computed properties, a getter's result is cached based on its dependencies, and will only re-evaluate 
+    when some of its dependencies have changed.
+
+  In general store we create getters:
+    getters: {
+      // state is passed automatically by vuex
+      doubleCounter: state => {
+        let count = state.counter * 2;
+        console.log(state.counter);
+
+        return count;
+      }
+    }
+  
+  And we acces them in the components we need:
+    computed: {
+      counter() {
+        return this.$store.getters.doubleCounter;
+      }
+    }
+
+3. mapGetters
+  To avoid putting all getters in computed methods, Vuex has mapGetters, that does this by default.
+  This function takes an array.
+  In this array we specify as strings all the getters we want to use in component.
+
+    computed: mapGetters(["doubleCounter", "stringCounter"])
+  
+  In the back scene these will create computed property and map them to the getters, to the functions from getters object, 
+    from store.
+  Instead of array we can have an object:
+    computed: mapGetters({
+      counter: "doubleCounter",
+      clicks: "stringCounter"
+    })
+
+  Using the spread operator to be able to use other computed properties. Spread operator says to js please pull all the 
+    props and methods and create separate key values pairs for each of them.
+    computed: {
+      ...mapGetters({
+        counter: "doubleCounter",
+        clicks: "stringCounter"
+      })
+    }
+
+  If the project doesn't recognize spread operator we need to install:
+    npm install --save-dev babel-preset-stage-2
+  And in .babelrc we need to add inside array  "stage-2"
+
+
+4. Mutations
+  The only way to actually change state in a Vuex store is by committing a mutation.
+
+  Mutation handler functions must be synchronous, otherwise the main benefit to easy to track modification of state, 
+    knowing when the state gets changed, gets lost. 
+   
+  If mutation is asynchronously we can't track witch mutation was responsible for witch change, because the state might 
+    change from another mutation, witch started first, but happened to be asynchronous and just took longer then in 
+    between mutation, witch was synchronous.
+
+  
+  That is why we have to safety to know that when we run a mutation, this changes the state imediately.
+
+  Asynchronous code can't be executed inside.
+
+  In mutation we don't return the state like in Getters, but we change it.
+    mutations: {
+      increment: state => {
+        state.counter++;
+      }
+    }
+
+  We commit mutations:
+    methods: {
+      increment() {
+        this.$store.commit("increment");
+      },
+      decrement() {
+        this.$store.commit("decrement");
+      }
+    }
+
+
+5. mapMutations
+  Same like mapGetters:
+    methods: {
+      ...mapMutations(["increment", "decrement"])
+    }
+
+6. Actions
+  Actiunile comit modificari(mutations).
+  We commit  mutation once the asynchronous task is done.
+    actions: {
+      increment: context => {
+        context.commit("increment");
+      }
+    }
+
+  Context object is passed by Vuex automatically and gives us access to commit method.
+
+  With es6 destructuring:
+    actions: {
+      increment: ({ commit }) => {
+        commit("increment");
+      }
+    }
+  
+  And in our component we dispatch an action:
+    increment() {
+      this.$store.dispatch("increment");
+    }
+
+  Using a payload:
+    increment(by) {
+      this.$store.dispatch("increment", by);
+    }
+
+  With mapActions inside methods:
+    ...mapActions(["increment", "decrement"]),
+
+    mapActions creates automatically the option to add a payload, but we have to add it insire store file:
+       increment: ({ commit }, payload) => {
+        commit("increment", payload);
+      }
+    
+    Inside mutation we have to add payload argument, too:
+      mutations: {
+        increment: (state, payload) => {
+          state.counter += payload;
+        }
+      }
+
+    Adding object payload in HTML for more arguments:
+      <button class="btn btn-primary" @click="increment({by: 50, duration: 1000})">Increment</button>
+    Then in store.js we will have:
+      asyncIncrement: ({ commit }, payload) => {
+        setTimeout(() => {
+          commit("increment", payload.by);
+        }, payload.duration);
+      },
+
+
+7. Vuex Two Way binding(custom)
+    In store.vue we create value:
+      state: {
+        counter: 0,
+        value: 0
+      }
+
+    Then in getters:
+      value: state => {
+        return state.value;
+      }
+
+    Then in mutations:
+      updateValue: (state, payload) => {
+        state.value = payload;
+      }
+    
+    Then in actions:
+      updateValue: ({ commit }, payload) => {
+        commit("updateValue", payload);
+      }
+    
+    In App.vue we create a method:
+      methods: {
+        updateThisValue(event) {
+          this.$store.dispatch("updateValue", event.target.value);
+        }
+      }
+
+    And we used it in an input:
+      <input type="text" :value="value" @input="updateThisValue">
+      <p>{{ value }}</p>
+
+    This is custom two way binding.
+
+
+  8. Two Way binding(shorter)
+    In HTML we will put v-model in input:
+      <input type="text" v-model="value">
+      <p>{{ value }}</p>
+
+    Then ignore the methods and in the computed property set a getter and a setter:
+      computed: {
+        value: {
+          get() {
+            return this.$store.getters.value;
+          },
+          set(value) {
+            this.$store.dispatch("updateValue", value);
+          }
+        }
+      }
+
+    In get() you get the data and set() has the value like argument and inside call the dispatch with updateValue.
+
+
