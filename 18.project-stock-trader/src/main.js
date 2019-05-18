@@ -16,6 +16,8 @@ Vue.filter("currency", value => {
   return "$" + value.toLocaleString();
 });
 
+console.log("process.env", process.env);
+
 /* eslint-disable no-new */
 new Vue({
   el: "#app",
