@@ -36,6 +36,7 @@
 
 4. VueJS Lifecycle
   1. new Vue()
+    - create a new Vue instance
 
   2. beforeCreate()
     - before the instance is created 

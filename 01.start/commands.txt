@@ -11,6 +11,9 @@
 4. Key Modifiers: enter
   When listening for keyboard events, we often need to check for specific keys. 
   Vue allows adding key modifiers for v-on when listening for key events.
+
+  <input type="text" v-on:keyup.enter="alertMe" />
+
   Key codes:
 
   .enter
@@ -68,8 +71,17 @@
   - behind the scene vuejs will merge this into a big object
 
 11. Classes using Objects
-  - use a computed property that returns an object with the classes to be changed
 
+  <div
+    class="demo"
+    @click="attcachedRed = !attcachedRed"
+    :class="divClasses"
+  ></div>
+
+  - use a computed property that returns an object with the classes to be changed
+   data: {
+    attcachedRed: false
+  },
   computed: {
     // depends only on red property so needs to be computed
     divClasses() {

@@ -52,10 +52,13 @@
 3. Send props from child to parent(using CUSTOM EVENT)
   To send props from child to parent we have to emit a CUSTOM EVENT, so we have access to $emit. 
   In emit we put the  name that we want to emit, nameWasReset.
-  So in child we emit an event: 
-    this.$emit('nameWasReset', this.myName)
+  So in child UserDetail.vue we emit an event: 
+    resetName() {
+      this.myName = "Mike";
+      this.$emit("nameWasReset", this.myName);
+    }
 
-  In parent we listen the event:
+  In parent User.vue we listen the event:
     <app-user-detail :myName="name" @nameWasReset="name = $event"></app-user-detail>
 
   - $event is the data the we passed through the event, myName

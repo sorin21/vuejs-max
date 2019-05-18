@@ -1,6 +1,10 @@
 1. Filters
   A filter is little syntax feature that you can use in template to transform (ONLY) some output.
 
+  The filter function always gets a value as an input, and the value is data that we want to transform.
+
+  Filter is rerrun afer each re-rendering of the DOM.
+
 2. Create filter globally
   In main.js:
     Vue.filter("toLowerCase", value => {
@@ -8,7 +12,6 @@
     });
 
 3. Create filter locally
-  The filter function always gets a value as an input, and the value is data that we want to transform.
   Inside template:
     <p>{{ text | toUpperCase}}</p>
 
@@ -20,6 +23,8 @@
     }
 
 4.Mixins
+  A mixin is a way to distribute reusable(code that is duplicate) VueJS code.
+
   Import it first:
     import { fruitMixin } from "./fruitMixin.js";
 

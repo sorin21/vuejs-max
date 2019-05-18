@@ -25,9 +25,10 @@ export default {
   mixins: [fruitMixin],
   data() {
     return {
-      text: "Hello VueJS!!!"
-      // fruits: ["Apple", "Banana", "Orange", "Kiwi"],
-      // filterText: ""
+      text: "Hello VueJS!!!",
+      // better solution to create a filter
+      fruits: ["Apple", "Banana", "Orange", "Kiwi"],
+      filterText: ""
     };
   },
   filters: {
@@ -35,16 +36,17 @@ export default {
       return value.toUpperCase();
     }
   },
-  // computed: {
-  //   filterdFruits() {
-  //     // this computed prop will be recalculated only if
-  //     // fruits or filterText changes
-  //     return this.fruits.filter(element => {
-  //       // return element.match(this.filterText);
-  //       return element.includes(this.filterText);
-  //     });
-  //   }
-  // },
+  computed: {
+    // better solution to create a filter because this option will not rerun to every DOM re-rendering
+    filterdFruits() {
+      // this computed prop will be recalculated only if
+      // fruits or filterText changes
+      return this.fruits.filter(element => {
+        // return element.match(this.filterText);
+        return element.includes(this.filterText);
+      });
+    }
+  },
   components: {
     appList: List
   }
